@@ -33,6 +33,7 @@
     "ws": "^8.19.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.1",
     "@types/express": "^5.0.6",
     "@types/node": "^20",
     "@types/ws": "^8.18.1",
