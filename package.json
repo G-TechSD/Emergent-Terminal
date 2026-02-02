@@ -24,10 +24,10 @@
     "tmux-alternative"
   ],
   "author": "G-Tech SD",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/G-TechSD/emergent-terminal"
+    "url": "https://github.com/G-TechSD/Emergent-Terminal.git"
   },
   "dependencies": {
     "express": "^5.2.1",
@@ -44,6 +44,11 @@
     "vitest": "^4.0.18"
   },
   "engines": {
-    "node": ">=18"
-  }
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
