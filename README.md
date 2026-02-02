@@ -15,14 +15,18 @@ A standalone terminal server with **shared sessions** for multi-device access. M
 ## Quick Start
 
 ```bash
-# Install
-npm install -g emergent-terminal
+# Install from GitHub
+npm install -g github:G-TechSD/Emergent-Terminal
+
+# Or clone and install locally
+git clone https://github.com/G-TechSD/Emergent-Terminal.git
+cd Emergent-Terminal
+npm install
+npm run build
+npm link  # Makes 'emergent-terminal' command available globally
 
 # Run (starts on port 3100)
 emergent-terminal
-
-# Or with npx
-npx emergent-terminal
 ```
 
 Open https://localhost:3100 and enter the token shown in the console.
