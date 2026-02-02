@@ -1,0 +1,45 @@
+{
+  "name": "emergent-terminal",
+  "version": "1.0.0",
+  "description": "Standalone terminal server with shared sessions, authentication, and multi-device sync",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "bin": {
+    "emergent-terminal": "./dist/server.js"
+  },
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "build": "tsc",
+    "regen-token": "tsx src/server.ts --regenerate-token"
+  },
+  "keywords": [
+    "terminal",
+    "xterm",
+    "websocket",
+    "shared-session",
+    "multi-device",
+    "tmux-alternative"
+  ],
+  "author": "G-Tech SD",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/G-TechSD/emergent-terminal"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "node-pty": "^1.1.0",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^20",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

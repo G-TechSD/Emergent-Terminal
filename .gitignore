@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.local-storage/
+localhost.key
+localhost.crt
+*.log
+.DS_Store
