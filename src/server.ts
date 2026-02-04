@@ -501,7 +501,7 @@ app.get("/", requireAuth, (req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Emergent Terminal</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
   <style>
@@ -610,6 +610,58 @@ app.get("/", requireAuth, (req, res) => {
     .status-dot.connected {
       background: #22c55e;
     }
+    /* Mobile Touch Toolbar */
+    .mobile-toolbar {
+      display: none;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 8px;
+      padding-bottom: max(70px, calc(8px + env(safe-area-inset-bottom, 70px)));
+      background: #18181b;
+      border-top: 1px solid #27272a;
+      justify-content: center;
+      position: sticky;
+      bottom: 0;
+    }
+    .touch-btn {
+      min-width: 44px;
+      height: 44px;
+      padding: 8px 12px;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      border-radius: 8px;
+      color: #e4e4e7;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .touch-btn:active {
+      background: #22c55e;
+      color: #000;
+    }
+    @media (max-width: 768px), (pointer: coarse) {
+      .mobile-toolbar {
+        display: flex;
+      }
+      .terminal-container {
+        padding: 4px;
+      }
+      .header {
+        padding: 6px 10px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .header-right {
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -650,6 +702,19 @@ app.get("/", requireAuth, (req, res) => {
     </header>
     <div class="terminal-container">
       <div id="terminal"></div>
+    </div>
+    <!-- Mobile Touch Toolbar -->
+    <div class="mobile-toolbar" id="mobileToolbar">
+      <button class="touch-btn" data-key="\\x1b[A" title="Up">↑</button>
+      <button class="touch-btn" data-key="\\x1b[B" title="Down">↓</button>
+      <button class="touch-btn" data-key="\\x1b[D" title="Left">←</button>
+      <button class="touch-btn" data-key="\\x1b[C" title="Right">→</button>
+      <button class="touch-btn" data-key="\\x03" title="Ctrl+C">^C</button>
+      <button class="touch-btn" data-key="\\x04" title="Ctrl+D">^D</button>
+      <button class="touch-btn" data-key="\\x1a" title="Ctrl+Z">^Z</button>
+      <button class="touch-btn" data-key="\\x09" title="Tab">Tab</button>
+      <button class="touch-btn" data-key="\\x1b" title="Escape">Esc</button>
+      <button class="touch-btn" data-key="\\x0c" title="Ctrl+L (Clear)">^L</button>
     </div>
     <div class="status-bar">
       <div class="status-indicator">
@@ -849,6 +914,38 @@ app.get("/", requireAuth, (req, res) => {
           setTimeout(() => { terminalEl.style.outline = orig; }, 200);
         });
       }
+    });
+
+    // Mobile touch toolbar handlers - don't focus terminal (prevents keyboard popup)
+    document.querySelectorAll('.touch-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const key = btn.getAttribute('data-key');
+        if (key && ws && ws.readyState === WebSocket.OPEN) {
+          // Parse escape sequences
+          const decoded = key.replace(/\\\\x([0-9a-fA-F]{2})/g, (_, hex) => 
+            String.fromCharCode(parseInt(hex, 16))
+          ).replace(/\\\\x1b/g, '\\x1b');
+          ws.send(JSON.stringify({ type: 'input', data: decoded }));
+        }
+        // Don't focus terminal - keeps keyboard hidden
+      });
+      // Prevent double-tap zoom and keyboard on iOS
+      btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+      }, { passive: false });
+      btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const key = btn.getAttribute('data-key');
+        if (key && ws && ws.readyState === WebSocket.OPEN) {
+          const decoded = key.replace(/\\\\x([0-9a-fA-F]{2})/g, (_, hex) => 
+            String.fromCharCode(parseInt(hex, 16))
+          ).replace(/\\\\x1b/g, '\\x1b');
+          ws.send(JSON.stringify({ type: 'input', data: decoded }));
+        }
+      }, { passive: false });
     });
 
     // Start connection
